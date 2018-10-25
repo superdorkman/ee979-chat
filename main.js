@@ -27,7 +27,14 @@ function createLoginWin() {
   );
   curWin = loginWin;
 
+  curWin.webContents.openDevTools({mode: 'detach'});
   setTray();
+
+  globalShortcut.register('F5', () => {
+    // console.log('f5 pressed');
+    // mainWin.webContents.loadURL('http://192.168.2.102:3000');
+    mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+  });
 
   ipcMain.on('loginWin:extract', (event) => {
     loginWin.minimize();
@@ -65,12 +72,6 @@ function createChatWin() {
   curWin = mainWin;
   // mainWin.webContents.loadURL('http://192.168.2.102:3000');
   mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
-
-  globalShortcut.register('F5', () => {
-    // console.log('f5 pressed');
-    // mainWin.webContents.loadURL('http://192.168.2.102:3000');
-    mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
-  })
   
   ipcMain.on('auth:check', (event) => {
     event.returnValue = isLoggedIn;
@@ -177,12 +178,6 @@ autoUpdater.on('download-progress', (progressObj) => {
 autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');
 });
-
-
-app.on('window-all-closed', () => {
-  app.quit();
-});
-
 
 // Auto updates - Option 1 - Simplest version
 // This will immediately download an update, then install when the app quits.
