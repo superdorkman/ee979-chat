@@ -52,8 +52,7 @@
       ]
     },
     "win": {
-      "icon": "public/assets/icons/icon.ico",
-      "asar": false
+      "icon": "public/assets/icons/icon.ico"
     },
     "publish": [{
       "provider": "github",
