@@ -1,6 +1,142 @@
-const { app, BrowserWindow, Menu, protocol, ipcMain } = require('electron');
+const { app, BrowserWindow, globalShortcut, ipcMain, Menu, Tray } = require('electron');
 const log = require('electron-log');
 const { autoUpdater } = require("electron-updater");
+const path = require('path');
+
+let loginWin = null;
+let mainWin = null;
+let tray = null;
+let isLoggedIn = false;
+let curWin = null;
+
+app.on('ready', createLoginWin);
+
+app.on('window-all-closed', () => {
+  // app.quit();
+});
+
+function createLoginWin() {
+  loginWin = new BrowserWindow(
+    {
+      width: 428,
+      height: 328,
+      frame: false,
+      icon: path.join(__dirname, 'public/assets/images/logo.png'),
+      skipTaskbar: true,
+    }
+  );
+  curWin = loginWin;
+
+  setTray();
+
+  ipcMain.on('loginWin:extract', (event) => {
+    loginWin.minimize();
+  });
+
+  ipcMain.on('loginWin:close', (event) => {
+    loginWin.close();
+    app.quit();
+  });
+
+  ipcMain.on('auth:check', (event) => {
+    event.returnValue = isLoggedIn;
+  });
+  
+  // loginWin.webContents.loadURL('http://192.168.2.102:3000');
+  loginWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+  ipcMain.on('auth:login', (event) => {
+    isLoggedIn = true;
+    loginWin.close();
+    createChatWin();
+  });
+}
+
+function createChatWin() {
+  if (mainWin) return;
+  
+  mainWin = new BrowserWindow(
+    {
+      minWidth: 1208,
+      minHeight: 796,
+      frame: false,
+      icon: path.join(__dirname, 'assets/images/logo.png'),
+    }
+  );
+  curWin = mainWin;
+  // mainWin.webContents.loadURL('http://192.168.2.102:3000');
+  mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+
+  globalShortcut.register('F5', () => {
+    // console.log('f5 pressed');
+    // mainWin.webContents.loadURL('http://192.168.2.102:3000');
+    mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+  })
+  
+  ipcMain.on('auth:check', (event) => {
+    event.returnValue = isLoggedIn;
+  });
+
+  setTray();
+  setWinEvents();
+
+  ipcMain.on('app:extract', (event) => {
+    mainWin.minimize();
+  });
+
+  ipcMain.on('app:hide', (event) => {
+    mainWin.hide();
+  });
+
+  ipcMain.on('app:expand', (event) => {
+    if (mainWin.isMaximized()) {
+      mainWin.unmaximize();
+    } else {
+      mainWin.maximize();
+    }
+  });
+
+  ipcMain.on('message:arrive', (event, message) => {
+    // console.log(message);
+    notifyUser();
+  });
+}
+
+function notifyUser() {
+  const isVisible = mainWin.isVisible();  // 是否托盘中
+  const isFocused = mainWin.isFocused();  // 是否当前选中
+  console.log(isVisible, isFocused);
+  if (!isFocused) {
+    if (isVisible) {
+      mainWin.flashFrame(true);
+    } else {
+      // console.log('should blink the tray')
+    }
+  }
+}
+
+function setTray() {
+  if (isLoggedIn) {
+    tray.setImage(path.join(__dirname, 'public/assets/images/logo.png'));
+  } else {
+    tray = new Tray(path.join(__dirname, 'public/assets/images/logo-gray.png'));
+    const contextMenu = Menu.buildFromTemplate([
+      {role: 'quit', label: '退出程序'},
+    ])
+    tray.setToolTip('易易在线聊天系统');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('click', () => {
+      // loginWin.isVisible() ? loginWin.hide() : loginWin.show();
+      curWin.show();
+    });
+  }
+}
+
+function setWinEvents() {
+  // mainWin.on('resize', (e) => {
+  //   console.log(e)
+  // });
+}
 
 //-------------------------------------------------------------------
 // Logging
@@ -14,51 +150,12 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
-//-------------------------------------------------------------------
-// Define the menu
-//
-// THIS SECTION IS NOT REQUIRED
-//-------------------------------------------------------------------
-let template = []
-if (process.platform === 'darwin') {
-  // OS X
-  const name = app.getName();
-  template.unshift({
-    label: name,
-    submenu: [
-      {
-        label: 'About ' + name,
-        role: 'about'
-      },
-      {
-        label: 'Quit',
-        accelerator: 'Command+Q',
-        click() { app.quit(); }
-      },
-    ]
-  })
-}
-
-
-let win;
-
 function sendStatusToWindow(text) {
   log.info(text);
-  win.webContents.send('message', text);
-}
-
-function createDefaultWindow() {
-  win = new BrowserWindow();
-  // win.webContents.openDevTools();
-  win.on('closed', () => {
-    win = null;
-  });
-  win.loadURL(`file://${__dirname}/version.html#v${app.getVersion()}`);
-  return win;
+  // win.webContents.send('message', text);
 }
 
 autoUpdater.on('checking-for-update', () => {
-  console.log('checking-for-update');
   sendStatusToWindow('Checking for update...');
 });
 
@@ -81,12 +178,6 @@ autoUpdater.on('update-downloaded', (info) => {
   sendStatusToWindow('Update downloaded');
 });
 
-app.on('ready', function () {
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
-
-  createDefaultWindow();
-});
 
 app.on('window-all-closed', () => {
   app.quit();

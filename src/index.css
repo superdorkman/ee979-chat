@@ -1,0 +1,81 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  font: menu;
+  overflow: hidden;
+}
+
+ul {
+  list-style: none;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: normal;
+}
+
+button, input {
+  outline: none;
+  border: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  /* -webkit-app-region: drag; */
+}
+
+.App {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.template-enter {
+  opacity: 0.01;
+  transform: scaleY(0.3) translateY(30%);
+}
+.template-enter-active {
+  opacity: 1;
+  transform: scaleY(1) translateY(0%);
+  transition: all 200ms ease-out;
+}
+.template-exit {
+  opacity: 1;
+  transform: scaleY(1) translateY(0%);
+}
+.template-exit-active {
+  opacity: 0.01;
+  transform: scale(0.9, 0.3) translateY(30%);
+  transition: all 200ms ease-in;
+}
+
+.fade-enter {
+  opacity: 0.01;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 500ms ease-in;
+}
