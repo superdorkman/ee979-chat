@@ -9,12 +9,6 @@ let tray = null;
 let isLoggedIn = false;
 let curWin = null;
 
-let url = require('url').format({
-  protocol: 'file',
-  slashes: true,
-  pathname: require('path').join(__dirname, 'build/index.html')
-})
-
 app.on('ready', createLoginWin);
 
 app.on('window-all-closed', () => {
@@ -39,7 +33,7 @@ function createLoginWin() {
   globalShortcut.register('F5', () => {
     // console.log('f5 pressed');
     // mainWin.webContents.loadURL('http://192.168.2.102:3000');
-    mainWin.webContents.loadURL(url);
+    mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
   });
 
   ipcMain.on('loginWin:extract', (event) => {
@@ -56,7 +50,7 @@ function createLoginWin() {
   });
   
   // loginWin.webContents.loadURL('http://192.168.2.102:3000');
-  loginWin.webContents.loadURL(url);
+  loginWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
     loginWin.close();
@@ -77,7 +71,7 @@ function createChatWin() {
   );
   curWin = mainWin;
   // mainWin.webContents.loadURL('http://192.168.2.102:3000');
-  mainWin.webContents.loadURL('build/index.html');
+  mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
   
   ipcMain.on('auth:check', (event) => {
     event.returnValue = isLoggedIn;

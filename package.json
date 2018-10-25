@@ -1,6 +1,6 @@
 {
   "name": "ee979-chat-app",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "main.js",
   "description": "chat app for ee979 service",
   "author": "Jon Ye",
@@ -52,7 +52,8 @@
       ]
     },
     "win": {
-      "icon": "public/assets/icons/icon.ico"
+      "icon": "public/assets/icons/icon.ico",
+      "asar": false
     },
     "publish": [{
       "provider": "github",
