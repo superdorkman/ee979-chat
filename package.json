@@ -60,10 +60,12 @@
     "win": {
       "icon": "public/assets/icons/icon.ico"
     },
-    "publish": [{
-      "provider": "github",
-      "owner": "superdorkman",
-      "repo": "ee979-chat"
-    }]
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "superdorkman",
+        "repo": "ee979-chat"
+      }
+    ]
   }
 }
