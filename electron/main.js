@@ -57,7 +57,7 @@ function createLoginWin() {
   
   loginWin.loadURL(startUrl);
 
-  curWin.webContents.openDevTools({mode: 'detach'});
+  // curWin.webContents.openDevTools({mode: 'detach'});
   setTray();
 
   ipcMain.on('auth:login', (event) => {
@@ -76,6 +76,9 @@ function createChatWin() {
       minHeight: 796,
       frame: false,
       icon: path.join(__dirname, 'assets/images/logo.png'),
+      webPreferences: {
+        devTools: true
+      }
     }
   );
   curWin = mainWin;

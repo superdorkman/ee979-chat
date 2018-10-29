@@ -1,6 +1,6 @@
 {
   "name": "ee979-chat-app",
-  "version": "1.0.6",
+  "version": "1.0.0",
   "main": "electron/main.js",
   "description": "chat app for ee979 service",
   "author": "Jon Ye",
