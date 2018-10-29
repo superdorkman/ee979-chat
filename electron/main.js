@@ -7,12 +7,10 @@ const fs = require('fs');
 
 let loginWin = null;
 let mainWin = null;
+
+
+
 let tray = null;
-setTimeout(() => {
-  const iconPath = path.join(__dirname, 'assets/images/logogray.png');
-  console.log(fs.existsSync(iconPath))
-  tray = new Tray(iconPath);
-}, 200);
 
 let isLoggedIn = false;
 let curWin = null;
@@ -65,7 +63,7 @@ function createLoginWin() {
   loginWin.loadURL(startUrl);
 
   // curWin.webContents.openDevTools({mode: 'detach'});
-  // setTray();
+  setTray();
 
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
@@ -96,10 +94,10 @@ function createChatWin() {
     event.returnValue = isLoggedIn;
   });
 
-  setTimeout(() => {
-    const iconPath = path.join(__dirname, 'assets/images/logo.png');
-    tray.setImage(iconPath);
-  }, 100);
+  const iconPath = path.join(__dirname, 'assets/images/logo.png');
+  let trayIcon = nativeImage.createFromPath(iconPath);
+  trayIcon = trayIcon.resize({ width: 16, height: 16 });
+  tray.setImage(trayIcon);
 
   setWinEvents();
 
@@ -139,6 +137,10 @@ function notifyUser() {
 }
 
 function setTray() {
+  const iconPath = path.join(__dirname, 'assets/images/logogray.png');
+  let trayIcon = nativeImage.createFromPath(iconPath);
+  trayIcon = trayIcon.resize({ width: 16, height: 16 });
+  tray = new Tray(trayIcon);
   const contextMenu = Menu.buildFromTemplate([
     {role: 'quit', label: '退出程序'},
   ])
