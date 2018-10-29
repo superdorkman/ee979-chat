@@ -57,7 +57,10 @@ function createLoginWin() {
   curWin.loadURL(startUrl);
 
   // curWin.webContents.openDevTools({mode: 'detach'});
-  setTray();
+  setTimeout(() => {
+    setTray();
+  }, 1000);
+  
 
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
@@ -88,10 +91,10 @@ function createChatWin() {
     event.returnValue = isLoggedIn;
   });
 
-  const iconPath = path.join(__dirname, 'assets/images/logo.png');
-  let trayIcon = nativeImage.createFromPath(iconPath);
-  trayIcon = trayIcon.resize({ width: 16, height: 16 });
-  tray.setImage(trayIcon);
+  // const iconPath = path.join(__dirname, 'assets/images/logo.png');
+  // let trayIcon = nativeImage.createFromPath(iconPath);
+  // trayIcon = trayIcon.resize({ width: 16, height: 16 });
+  // tray.setImage(trayIcon);
 
   setWinEvents();
 
@@ -131,7 +134,7 @@ function notifyUser() {
 }
 
 function setTray() {
-  const iconPath = path.join(__dirname, 'assets/images/logogray.png');
+  const iconPath = path.join(__dirname, '/../public/assets/images/logogray.png');
   let trayIcon = nativeImage.createFromPath(iconPath);
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
   tray = new Tray(trayIcon);
@@ -141,9 +144,9 @@ function setTray() {
   // tray.setToolTip('易易在线聊天系统');
   tray.setContextMenu(contextMenu);
 
-  // tray.on('click', () => {
-  //   curWin.show();
-  // });
+  tray.on('click', () => {
+    curWin.show();
+  });
 }
 
 function setWinEvents() {
