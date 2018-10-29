@@ -5,11 +5,6 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 
-let loginWin = null;
-let mainWin = null;
-
-
-
 let tray = null;
 
 let isLoggedIn = false;
@@ -28,7 +23,7 @@ app.on('window-all-closed', () => {
 });
 
 function createLoginWin() {
-  loginWin = new BrowserWindow(
+  curWin = new BrowserWindow(
     {
       width: 428,
       height: 328,
@@ -40,19 +35,18 @@ function createLoginWin() {
       }
     }
   );
-  curWin = loginWin;
 
   globalShortcut.register('F5', () => {
     // console.log('f5 pressed');
-    mainWin.loadURL(startUrl);
+    curWin.loadURL(startUrl);
   });
 
   ipcMain.on('loginWin:extract', (event) => {
-    loginWin.minimize();
+    curWin.minimize();
   });
 
   ipcMain.on('loginWin:close', (event) => {
-    loginWin.close();
+    curWin.close();
     app.quit();
   });
 
@@ -60,22 +54,23 @@ function createLoginWin() {
     event.returnValue = isLoggedIn;
   });
   
-  loginWin.loadURL(startUrl);
+  curWin.loadURL(startUrl);
 
   // curWin.webContents.openDevTools({mode: 'detach'});
   setTray();
 
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
+    curWin.close();
+    curWin = null;
     createChatWin();
-    loginWin.close();
   });
 }
 
 function createChatWin() {
-  if (mainWin) return;
+  if (curWin) return;
   
-  mainWin = new BrowserWindow(
+  curWin = new BrowserWindow(
     {
       minWidth: 1208,
       minHeight: 796,
@@ -86,7 +81,7 @@ function createChatWin() {
       }
     }
   );
-  curWin = mainWin;
+  // curWin = mainWin;
   
   curWin.loadURL(startUrl);
   
@@ -129,7 +124,7 @@ function notifyUser() {
   console.log(isVisible, isFocused);
   if (!isFocused) {
     if (isVisible) {
-      mainWin.flashFrame(true);
+      curWin.flashFrame(true);
     } else {
       // console.log('should blink the tray')
     }
@@ -141,16 +136,15 @@ function setTray() {
   let trayIcon = nativeImage.createFromPath(iconPath);
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
   tray = new Tray(trayIcon);
-  const contextMenu = Menu.buildFromTemplate([
-    {role: 'quit', label: '退出程序'},
-  ])
-  tray.setToolTip('易易在线聊天系统');
-  tray.setContextMenu(contextMenu);
+  // const contextMenu = Menu.buildFromTemplate([
+  //   {role: 'quit', label: '退出程序'},
+  // ])
+  // tray.setToolTip('易易在线聊天系统');
+  // tray.setContextMenu(contextMenu);
 
-  tray.on('click', () => {
-    // loginWin.isVisible() ? loginWin.hide() : loginWin.show();
-    curWin.show();
-  });
+  // tray.on('click', () => {
+  //   curWin.show();
+  // });
 }
 
 function setWinEvents() {
