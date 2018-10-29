@@ -81,7 +81,6 @@ function createChatWin() {
       }
     }
   );
-  // curWin = mainWin;
   
   curWin.loadURL(startUrl);
   
@@ -136,11 +135,11 @@ function setTray() {
   let trayIcon = nativeImage.createFromPath(iconPath);
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
   tray = new Tray(trayIcon);
-  // const contextMenu = Menu.buildFromTemplate([
-  //   {role: 'quit', label: '退出程序'},
-  // ])
+  const contextMenu = Menu.buildFromTemplate([
+    {role: 'quit', label: '退出程序'},
+  ])
   // tray.setToolTip('易易在线聊天系统');
-  // tray.setContextMenu(contextMenu);
+  tray.setContextMenu(contextMenu);
 
   // tray.on('click', () => {
   //   curWin.show();
