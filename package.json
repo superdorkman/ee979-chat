@@ -48,6 +48,7 @@
       "build/**/*",
       "electron/*"
     ],
+    "productName": "易易在线",
     "mac": {
       "category": "your.app.category.type",
       "icon": "public/assets/images/logo.png",

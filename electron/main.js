@@ -30,6 +30,9 @@ function createLoginWin() {
       frame: false,
       icon: path.join(__dirname, '/../public/assets/images/logo.png'),
       skipTaskbar: true,
+      webPreferences: {
+        devTools: true
+      }
     }
   );
   curWin = loginWin;
@@ -54,13 +57,13 @@ function createLoginWin() {
   
   loginWin.loadURL(startUrl);
 
-  // curWin.webContents.openDevTools({mode: 'detach'});
+  curWin.webContents.openDevTools({mode: 'detach'});
   setTray();
 
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
-    loginWin.close();
     createChatWin();
+    loginWin.close();
   });
 }
 
@@ -123,9 +126,9 @@ function notifyUser() {
 
 function setTray() {
   if (isLoggedIn) {
-    tray.setImage(path.join(__dirname, '/../public/assets/images/logo.png'));
+    tray.setImage(path.join(__dirname, 'assets/images/logo.png'));
   } else {
-    tray = new Tray(path.join(__dirname, '/../public/assets/images/logo-gray.png'));
+    tray = new Tray(path.join(__dirname, 'assets/images/logo-gray.png'));
     const contextMenu = Menu.buildFromTemplate([
       {role: 'quit', label: '退出程序'},
     ])
