@@ -2,12 +2,19 @@ const { app, BrowserWindow, globalShortcut, ipcMain, Menu, Tray } = require('ele
 const log = require('electron-log');
 const { autoUpdater } = require("electron-updater");
 const path = require('path');
+const url = require('url');
 
 let loginWin = null;
 let mainWin = null;
 let tray = null;
 let isLoggedIn = false;
 let curWin = null;
+
+const startUrl = process.env.ELECTRON_START_URL || url.format({
+  pathname: path.join(__dirname, '/../build/index.html'),
+  protocol: 'file:',
+  slashes: true
+});
 
 app.on('ready', createLoginWin);
 
@@ -21,19 +28,15 @@ function createLoginWin() {
       width: 428,
       height: 328,
       frame: false,
-      icon: path.join(__dirname, 'public/assets/images/logo.png'),
+      icon: path.join(__dirname, '/../public/assets/images/logo.png'),
       skipTaskbar: true,
     }
   );
   curWin = loginWin;
 
-  curWin.webContents.openDevTools({mode: 'detach'});
-  setTray();
-
   globalShortcut.register('F5', () => {
     // console.log('f5 pressed');
-    // mainWin.webContents.loadURL('http://192.168.2.102:3000');
-    mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+    mainWin.loadURL(startUrl);
   });
 
   ipcMain.on('loginWin:extract', (event) => {
@@ -49,8 +52,11 @@ function createLoginWin() {
     event.returnValue = isLoggedIn;
   });
   
-  // loginWin.webContents.loadURL('http://192.168.2.102:3000');
-  loginWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+  loginWin.loadURL(startUrl);
+
+  // curWin.webContents.openDevTools({mode: 'detach'});
+  setTray();
+
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
     loginWin.close();
@@ -70,8 +76,8 @@ function createChatWin() {
     }
   );
   curWin = mainWin;
-  // mainWin.webContents.loadURL('http://192.168.2.102:3000');
-  mainWin.webContents.loadURL(`file://${__dirname}/build/index.html`);
+  
+  mainWin.loadURL(startUrl);
   
   ipcMain.on('auth:check', (event) => {
     event.returnValue = isLoggedIn;
@@ -117,9 +123,9 @@ function notifyUser() {
 
 function setTray() {
   if (isLoggedIn) {
-    tray.setImage(path.join(__dirname, 'public/assets/images/logo.png'));
+    tray.setImage(path.join(__dirname, '/../public/assets/images/logo.png'));
   } else {
-    tray = new Tray(path.join(__dirname, 'public/assets/images/logo-gray.png'));
+    tray = new Tray(path.join(__dirname, '/../public/assets/images/logo-gray.png'));
     const contextMenu = Menu.buildFromTemplate([
       {role: 'quit', label: '退出程序'},
     ])

@@ -1,16 +1,17 @@
 {
   "name": "ee979-chat-app",
   "version": "1.0.6",
-  "main": "main.js",
+  "main": "electron/main.js",
   "description": "chat app for ee979 service",
   "author": "Jon Ye",
-  "homepage": ".",
+  "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
     "build": "rm -rf build && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
+    "pack": "rm -rf dist && build",
     "publish": "rm -rf dist && build --win -p always"
   },
   "devDependencies": {
@@ -43,6 +44,10 @@
   "build": {
     "appId": "com.github.superdorkman.ee979chatapp",
     "extends": null,
+    "files": [
+      "build/**/*",
+      "electron/*"
+    ],
     "mac": {
       "category": "your.app.category.type",
       "icon": "public/assets/images/logo.png",
