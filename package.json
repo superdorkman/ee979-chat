@@ -1,5 +1,5 @@
 {
-  "name": "ee979-chat-app",
+  "name": "ee979-chat",
   "version": "1.0.0",
   "main": "electron/main.js",
   "description": "chat app for ee979 service",
@@ -63,7 +63,7 @@
     "publish": [{
       "provider": "github",
       "owner": "superdorkman",
-      "repo": "ee979-chat-app"
+      "repo": "ee979-chat"
     }]
   }
 }
