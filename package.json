@@ -11,6 +11,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "ELECTRON_START_URL=http://192.168.2.102:3001 electron .",
+    "electron:build": "electron .",
     "pack": "rm -rf dist && build",
     "publish": "rm -rf dist && build --win -p always"
   },

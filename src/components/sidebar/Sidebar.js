@@ -22,7 +22,8 @@ export class Sidebar extends Component {
 
   componentDidMount() {
     ipcRenderer.on('update', (event, text) => {
-      this.setState({ updateMsg: text });
+      console.log(text);
+      // this.setState({ updateMsg: text });
     })
   }
 

@@ -6,7 +6,7 @@ const url = require('url');
 let tray = null;
 
 let isLoggedIn = false;
-let curWin = null;
+let win = null;
 
 const startUrl = process.env.ELECTRON_START_URL || url.format({
   pathname: path.join(__dirname, '/../build/index.html'),
@@ -21,7 +21,7 @@ app.on('window-all-closed', () => {
 });
 
 function createLoginWin() {
-  curWin = new BrowserWindow(
+  win = new BrowserWindow(
     {
       width: 428,
       height: 328,
@@ -36,15 +36,15 @@ function createLoginWin() {
 
   globalShortcut.register('F5', () => {
     // console.log('f5 pressed');
-    curWin.loadURL(startUrl);
+    win.loadURL(startUrl);
   });
 
-  ipcMain.on('loginWin:extract', (event) => {
-    curWin.minimize();
+  ipcMain.on('app:extract', (event) => {
+    win.minimize();
   });
 
-  ipcMain.on('loginWin:close', (event) => {
-    curWin.close();
+  ipcMain.on('app:close', (event) => {
+    win.close();
     app.quit();
   });
 
@@ -52,83 +52,69 @@ function createLoginWin() {
     event.returnValue = isLoggedIn;
   });
   
-  curWin.loadURL(startUrl);
+  win.loadURL(startUrl);
 
-  // curWin.webContents.openDevTools({mode: 'detach'});
+  // win.webContents.openDevTools({mode: 'detach'});
 
   setTray();
   
-
   ipcMain.on('auth:login', (event) => {
     isLoggedIn = true;
-    curWin.close();
-    curWin = null;
-    createChatWin();
+    prepareChatWin();
   });
 }
 
-function createChatWin() {
-  if (curWin) return;
-  
-  curWin = new BrowserWindow(
-    {
-      minWidth: 1208,
-      minHeight: 796,
-      frame: false,
-      icon: path.join(__dirname, 'logo.png'),
-      webPreferences: {
-        devTools: true
-      }
-    }
-  );
-  
-  curWin.loadURL(startUrl);
 
-  // curWin.webContents.openDevTools({mode: 'detach'});
-  
-  ipcMain.on('auth:check', (event) => {
-    event.returnValue = isLoggedIn;
-  });
+function prepareChatWin() {
+  // console.log(win.getBounds())
+  const { width: sw, height: sh } = require('electron').screen.getPrimaryDisplay().workAreaSize;
+  win.loadURL(startUrl);
+  const x = (sw - 1208) / 2;
+  const y = (sh - 796) / 2;
+  win.setBounds({
+    x,
+    y,
+    width: 1208,
+    height: 796,
+  }, true);
+  // win.setSize(1208, 796, true);
 
   const iconPath = path.join(__dirname, 'logo.png');
   let trayIcon = nativeImage.createFromPath(iconPath);
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
   tray.setImage(trayIcon);
 
-  setWinEvents();
-
-  ipcMain.on('app:extract', (event) => {
-    curWin.minimize();
-  });
 
   ipcMain.on('app:hide', (event) => {
-    curWin.hide();
+    win.hide();
   });
 
   ipcMain.on('app:expand', (event) => {
-    if (curWin.isMaximized()) {
-      curWin.unmaximize();
+    if (win.isMaximized()) {
+      win.unmaximize();
     } else {
-      curWin.maximize();
+      win.maximize();
     }
   });
 
   ipcMain.on('message:arrive', (event, message) => {
-    // console.log(message);
     notifyUser();
   });
+
+  win.webContents.openDevTools({mode: 'detach'});
 
   // 检查更新
   autoUpdater.checkForUpdatesAndNotify();
 }
 
+
 function notifyUser() {
-  const isVisible = curWin.isVisible();  // 是否托盘中
-  const isFocused = curWin.isFocused();  // 是否当前选中
+  const isVisible = win.isVisible();  // 是否托盘中
+  const isFocused = win.isFocused();  // 是否当前选中
   // console.log(isVisible, isFocused);
   if (!isFocused) {
     if (isVisible) {
-      curWin.flashFrame(true);
+      win.flashFrame(true);
     } else {
       // console.log('should blink the tray')
     }
@@ -142,7 +128,7 @@ function setTray() {
   tray = new Tray(trayIcon);
   const contextMenu = Menu.buildFromTemplate([
     {label: '显示窗口', click: () => {
-      curWin.show();
+      win.show();
     }},
     {role: 'quit', label: '退出程序'},
   ])
@@ -150,7 +136,7 @@ function setTray() {
   tray.setContextMenu(contextMenu);
 
   tray.on('click', () => {
-    curWin.show();
+    win.show();
   });
 }
 
@@ -160,8 +146,7 @@ function setWinEvents() {
 
 // 升级通信
 function sendStatusToWindow(text) {
-  console.log(text)
-  curWin.webContents.send('update', text);
+  win.webContents.send('update', text);
 }
 
 autoUpdater.on('checking-for-update', () => {

@@ -59,7 +59,7 @@ export class Login extends Component {
   }
 
   handleCtrlClick(type) {
-    ipcRenderer.send(`loginWin:${type}`, {});
+    ipcRenderer.send(`app:${type}`, {});
   }
 
   render() {
