@@ -83,6 +83,8 @@ function createChatWin() {
   );
   
   curWin.loadURL(startUrl);
+
+  // curWin.webContents.openDevTools({mode: 'detach'});
   
   ipcMain.on('auth:check', (event) => {
     event.returnValue = isLoggedIn;
@@ -115,12 +117,15 @@ function createChatWin() {
     // console.log(message);
     notifyUser();
   });
+
+  // 检查更新
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 function notifyUser() {
-  const isVisible = mainWin.isVisible();  // 是否托盘中
-  const isFocused = mainWin.isFocused();  // 是否当前选中
-  console.log(isVisible, isFocused);
+  const isVisible = curWin.isVisible();  // 是否托盘中
+  const isFocused = curWin.isFocused();  // 是否当前选中
+  // console.log(isVisible, isFocused);
   if (!isFocused) {
     if (isVisible) {
       curWin.flashFrame(true);
@@ -141,7 +146,7 @@ function setTray() {
     }},
     {role: 'quit', label: '退出程序'},
   ])
-  // tray.setToolTip('易易在线聊天系统');
+  tray.setToolTip('易易在线聊天系统');
   tray.setContextMenu(contextMenu);
 
   tray.on('click', () => {
@@ -150,13 +155,12 @@ function setTray() {
 }
 
 function setWinEvents() {
-  // mainWin.on('resize', (e) => {
-  //   console.log(e)
-  // });
+  
 }
 
 // 升级通信
 function sendStatusToWindow(text) {
+  console.log(text)
   curWin.webContents.send('update', text);
 }
 
@@ -185,9 +189,9 @@ autoUpdater.on('update-downloaded', (info) => {
 
 // Auto updates - Option 1 - Simplest version
 // This will immediately download an update, then install when the app quits.
-app.on('ready', function () {
-  autoUpdater.checkForUpdatesAndNotify();
-});
+// app.on('ready', function () {
+//   autoUpdater.checkForUpdatesAndNotify();
+// });
 
 // Auto updates - Option 2 - More control
 // The app doesn't need to listen to any events except `update-downloaded`

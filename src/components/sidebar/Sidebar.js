@@ -13,10 +13,17 @@ export class Sidebar extends Component {
   state = {
     chats: null,
     curChatSn: null,
+    updateMsg: '',
   }
 
   componentWillMount() {
     this.getList();
+  }
+
+  componentDidMount() {
+    ipcRenderer.on('update', (event, text) => {
+      this.setState({ updateMsg: text });
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -108,6 +115,7 @@ export class Sidebar extends Component {
       <Container onMouseDown={this.handleMouseDown}>
         <LogoWrap>
           <img src={logo} />
+          <div>{this.state.updateMsg}</div>
         </LogoWrap>
 
         <Chats>
