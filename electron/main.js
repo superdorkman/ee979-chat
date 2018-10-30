@@ -43,6 +43,10 @@ function createLoginWin() {
     win.minimize();
   });
 
+  ipcMain.on('app:hide', (event) => {
+    win.hide();
+  });
+
   ipcMain.on('app:close', (event) => {
     win.close();
     app.quit();
@@ -84,11 +88,6 @@ function prepareChatWin() {
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
   tray.setImage(trayIcon);
 
-
-  ipcMain.on('app:hide', (event) => {
-    win.hide();
-  });
-
   ipcMain.on('app:expand', (event) => {
     if (win.isMaximized()) {
       win.unmaximize();
@@ -101,7 +100,7 @@ function prepareChatWin() {
     notifyUser();
   });
 
-  win.webContents.openDevTools({mode: 'detach'});
+  // win.webContents.openDevTools({mode: 'detach'});
 
   // 检查更新
   autoUpdater.checkForUpdatesAndNotify();
