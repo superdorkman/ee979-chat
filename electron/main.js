@@ -1,9 +1,7 @@
 const { app, BrowserWindow, globalShortcut, ipcMain, Menu, Tray, nativeImage } = require('electron');
-const log = require('electron-log');
 const { autoUpdater } = require("electron-updater");
 const path = require('path');
 const url = require('url');
-const fs = require('fs');
 
 let tray = null;
 
@@ -28,7 +26,7 @@ function createLoginWin() {
       width: 428,
       height: 328,
       frame: false,
-      icon: path.join(__dirname, '/../public/assets/images/logo.png'),
+      icon: path.join(__dirname, 'logo.png'),
       skipTaskbar: true,
       webPreferences: {
         devTools: true
@@ -57,9 +55,8 @@ function createLoginWin() {
   curWin.loadURL(startUrl);
 
   // curWin.webContents.openDevTools({mode: 'detach'});
-  setTimeout(() => {
-    setTray();
-  }, 1000);
+
+  setTray();
   
 
   ipcMain.on('auth:login', (event) => {
@@ -78,7 +75,7 @@ function createChatWin() {
       minWidth: 1208,
       minHeight: 796,
       frame: false,
-      icon: path.join(__dirname, 'assets/images/logo.png'),
+      icon: path.join(__dirname, 'logo.png'),
       webPreferences: {
         devTools: true
       }
@@ -91,10 +88,10 @@ function createChatWin() {
     event.returnValue = isLoggedIn;
   });
 
-  // const iconPath = path.join(__dirname, 'assets/images/logo.png');
-  // let trayIcon = nativeImage.createFromPath(iconPath);
-  // trayIcon = trayIcon.resize({ width: 16, height: 16 });
-  // tray.setImage(trayIcon);
+  const iconPath = path.join(__dirname, 'logo.png');
+  let trayIcon = nativeImage.createFromPath(iconPath);
+  trayIcon = trayIcon.resize({ width: 16, height: 16 });
+  tray.setImage(trayIcon);
 
   setWinEvents();
 
@@ -134,11 +131,14 @@ function notifyUser() {
 }
 
 function setTray() {
-  const iconPath = path.join(__dirname, '/../public/assets/images/logogray.png');
+  const iconPath = path.join(__dirname, 'logogray.png');
   let trayIcon = nativeImage.createFromPath(iconPath);
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
   tray = new Tray(trayIcon);
   const contextMenu = Menu.buildFromTemplate([
+    {label: '显示窗口', click: () => {
+      curWin.show();
+    }},
     {role: 'quit', label: '退出程序'},
   ])
   // tray.setToolTip('易易在线聊天系统');
@@ -155,21 +155,9 @@ function setWinEvents() {
   // });
 }
 
-//-------------------------------------------------------------------
-// Logging
-//
-// THIS SECTION IS NOT REQUIRED
-//
-// This logging setup is not required for auto-updates to work,
-// but it sure makes debugging easier :)
-//-------------------------------------------------------------------
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
-
+// 升级通信
 function sendStatusToWindow(text) {
-  log.info(text);
-  // win.webContents.send('message', text);
+  curWin.webContents.send('update', text);
 }
 
 autoUpdater.on('checking-for-update', () => {
