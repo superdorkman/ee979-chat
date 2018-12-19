@@ -1,6 +1,6 @@
 {
   "name": "ee979-chat",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "electron/main.js",
   "description": "chat app for ee979 service",
   "author": "Jon Ye",
@@ -10,7 +10,7 @@
     "build": "rm -rf build && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "ELECTRON_START_URL=http://192.168.2.102:3001 electron .",
+    "electron": "ELECTRON_START_URL=http://192.168.1.100:3000 electron .",
     "electron:build": "electron .",
     "pack": "rm -rf dist && build",
     "publish": "rm -rf dist && build --win -p always"

@@ -8,8 +8,8 @@ let client;
 let clientId;
 let topic;
 
-const connect = (memberSN, token) => {
-  clientId = `${groupId}@@@${memberSN}`;
+const connect = (memberSN, token, num = 1) => {
+  clientId = `${groupId}@@@${memberSN}${num}`;
   topic = `ee979/${memberSN}`;
   const message = JSON.stringify({ token, type: 'R' });
   const opts = {
@@ -46,8 +46,8 @@ const initMqtt = () => {
     .then(res => {
       const { data } = res.data;
       if (data) {
-        const { memberSN, token } = data;
-        connect(memberSN, token);
+        const { memberSN, token, num } = data;
+        connect(memberSN, token, num);
         store.dispatch({ type: 'SET_CHATSN', sn: memberSN });
       }
     }).catch(err => { 

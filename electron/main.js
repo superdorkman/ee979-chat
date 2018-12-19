@@ -13,8 +13,14 @@ const startUrl = process.env.ELECTRON_START_URL || url.format({
   protocol: 'file:',
   slashes: true
 });
+// const startUrl = '192.168.2.106:3000';
 
 app.on('ready', createLoginWin);
+
+app.on('will-quit', () => {
+  // 清空所有快捷键
+  globalShortcut.unregisterAll()
+})
 
 app.on('window-all-closed', () => {
   // app.quit();
@@ -28,10 +34,9 @@ function createLoginWin() {
       frame: false,
       icon: path.join(__dirname, 'logo.png'),
       skipTaskbar: true,
-      title: '意义在线',
-      webPreferences: {
-        devTools: true
-      }
+      // webPreferences: {
+      //   devTools: true
+      // }
     }
   );
 
@@ -59,7 +64,7 @@ function createLoginWin() {
   
   win.loadURL(startUrl);
 
-  win.webContents.openDevTools({mode: 'detach'});
+  // win.webContents.openDevTools({mode: 'detach'});
 
   setTray();
   
@@ -73,6 +78,7 @@ function createLoginWin() {
 function prepareChatWin() {
   // console.log(win.getBounds())
   const { width: sw, height: sh } = require('electron').screen.getPrimaryDisplay().workAreaSize;
+  win.setSkipTaskbar(false);
   win.loadURL(startUrl);
   const _x = (sw - 1208) / 2;
   const _y = (sh - 796) / 2;

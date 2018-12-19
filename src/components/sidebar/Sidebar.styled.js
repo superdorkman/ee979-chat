@@ -111,8 +111,8 @@ export const ChatItem = styled.li`
     align-items: center;
     width: 24px;
     height: 14px;
-    background-color: #fff;
-    color: #8868f1;
+    background-color: red;
+    color: #fff;
     border-radius: 4px;
     font-size: 12px;
     line-height: 14px;
