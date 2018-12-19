@@ -8,11 +8,12 @@ let tray = null;
 let isLoggedIn = false;
 let win = null;
 
-const startUrl = process.env.ELECTRON_START_URL || url.format({
-  pathname: path.join(__dirname, '/../build/index.html'),
-  protocol: 'file:',
-  slashes: true
-});
+// const startUrl = process.env.ELECTRON_START_URL || url.format({
+//   pathname: path.join(__dirname, '/../build/index.html'),
+//   protocol: 'file:',
+//   slashes: true
+// });
+const startUrl = '192.168.2.106:3000';
 
 app.on('ready', createLoginWin);
 
@@ -28,9 +29,9 @@ function createLoginWin() {
       frame: false,
       icon: path.join(__dirname, 'logo.png'),
       skipTaskbar: true,
-      webPreferences: {
-        devTools: true
-      }
+      // webPreferences: {
+      //   devTools: true
+      // }
     }
   );
 
