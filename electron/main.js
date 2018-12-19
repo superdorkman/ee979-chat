@@ -28,6 +28,7 @@ function createLoginWin() {
       frame: false,
       icon: path.join(__dirname, 'logo.png'),
       skipTaskbar: true,
+      title: '意义在线',
       webPreferences: {
         devTools: true
       }
@@ -58,7 +59,7 @@ function createLoginWin() {
   
   win.loadURL(startUrl);
 
-  // win.webContents.openDevTools({mode: 'detach'});
+  win.webContents.openDevTools({mode: 'detach'});
 
   setTray();
   
@@ -73,16 +74,16 @@ function prepareChatWin() {
   // console.log(win.getBounds())
   const { width: sw, height: sh } = require('electron').screen.getPrimaryDisplay().workAreaSize;
   win.loadURL(startUrl);
-  const x = (sw - 1208) / 2;
-  const y = (sh - 796) / 2;
+  const _x = (sw - 1208) / 2;
+  const _y = (sh - 796) / 2;
   win.setBounds({
-    x,
-    y,
+    x: 100,
+    y: 20,
     width: 1208,
     height: 796,
   }, true);
   // win.setSize(1208, 796, true);
-
+  
   const iconPath = path.join(__dirname, 'logo.png');
   let trayIcon = nativeImage.createFromPath(iconPath);
   trayIcon = trayIcon.resize({ width: 16, height: 16 });
