@@ -60,7 +60,7 @@ export class Sidebar extends Component {
   getList() {
     const body = {
       page: 1,
-      size: 20,
+      size: 30,
     }
     axios.post(`${API_URL}/Chats/mlist`, body)
       .then(

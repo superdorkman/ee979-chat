@@ -19,6 +19,12 @@ export const TopWidgets = styled.div`
     display: flex;
   }
 
+  .file {
+    position: absolute;
+    left: 10000px;
+    opacity: 0;
+  }
+
   .icon {
     width: 36px;
     height: 36px;

@@ -237,6 +237,26 @@ export class ChatIpt extends Component {
     this.iptBox.appendChild(img);
   }
 
+  handleFileChange = async (e) => {
+    const tokenRes = await getOssKey();
+    if (!tokenRes.data.data) return this.file.value = null;
+    const fileRes = await uploadImg(tokenRes.data.data, this.file);
+    if (!fileRes.data.data) return this.file.value = null;
+    const filename = fileRes.data.data.filename;
+    const msgWrap = this.wrapImg(filename);
+    this.sendMsg(msgWrap);
+  }
+
+  wrapImg(img) {
+    const imgTag = `<img title src="${img}" style="max-width:100%; height:30vw">`;
+    return {
+      msg: imgTag,
+      imgOnly: true,
+      src: img,
+      created: new Date()
+    }
+  }
+
   onToggleTpl = () => {
     this.setState({ showTemplates: !this.state.showTemplates });
   }
@@ -259,9 +279,11 @@ export class ChatIpt extends Component {
             <div className="icon" onClick={() => this.handleWidgetClick('emoji')}>
               <svg><use xlinkHref={`${svgIcons}#emoji`} /></svg>
             </div>
-            <div className="icon">
+            <label className="icon" onClick={() => this.handleWidgetClick('emoji')}>
+              <input type="file" accept="image/jpg,image/png,image/jpeg,image/gif" className="file" ref={ref => this.file = ref} 
+              onChange={this.handleFileChange}/>
               <svg><use xlinkHref={`${svgIcons}#photo`} /></svg>
-            </div>
+            </label>
           </div>
           <div className="right">
             <div className="icon" onClick={this.onToggleTpl}>
