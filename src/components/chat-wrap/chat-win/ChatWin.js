@@ -70,7 +70,7 @@ export class ChatWin extends PureComponent {
           <LeftItem key={created + idx}>
             <div className="avatar">{id}</div>
             {imgOnly ? (
-              <img src={src} />
+              <img src={src} onClick={this.handleImgClick} />
             ) : (
               <div className="content" dangerouslySetInnerHTML={this.createMarkup(msg)}></div>
             )}
@@ -88,6 +88,10 @@ export class ChatWin extends PureComponent {
         </RightItem>
       )
     });
+  }
+
+  handleImgClick = () => {
+    console.log('img clicked')
   }
 
   render() {

@@ -64,7 +64,7 @@ function createLoginWin() {
   
   win.loadURL(startUrl);
 
-  // win.webContents.openDevTools({mode: 'detach'});
+  win.webContents.openDevTools({mode: 'detach'});
 
   setTray();
   
